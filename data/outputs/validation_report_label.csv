@@ -1,2 +1,7 @@
-rule_name (검증룰명),metric_value (지표값),threshold (허용기준),status (상태),note (비고)
-territory_code_missing_ratio,0.0,0.05,pass,"missing_uid=0, missing_territory=0, total=38331"
+rule_name (검증룰명),metric_value (지표값),threshold (허용기준),status (상태),note (비고),issue_type (이슈유형),severity (심각도),entity_id (엔티티ID),year_quarter (연분기),details (상세내용)
+UNMAPPED_PHARMACY_count,0.0,0.0,pass,unmapped pharmacy rows=0,UNMAPPED_PHARMACY,high,,,unmapped pharmacy rows=0
+NO_TERRITORY_count,0.0,0.0,pass,territory missing rows=0,NO_TERRITORY,high,,,territory missing rows=0
+LOW_COVERAGE_count,0.0,7666.0,pass,coverage < 0.75 rows=0,LOW_COVERAGE,med,,,coverage < 0.75 rows=0
+RULE_MISSING_count,0.0,0.0,pass,share_rule_source=none rows=0,RULE_MISSING,high,,,share_rule_source=none rows=0
+RULE_EXTENDED_count,0.0,11499.0,pass,share_rule_source=extended rows=0,RULE_EXTENDED,low,,,share_rule_source=extended rows=0
+TRACE_OPEN_CASE_count,3255.0,7666.0,pass,open trace candidates rows=3255,TRACE_OPEN_CASE,med,,,open trace candidates rows=3255

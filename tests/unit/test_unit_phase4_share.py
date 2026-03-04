@@ -105,3 +105,10 @@ def test_redistribute_clinic_pool_by_base_amount():
     by_id = {r["rep_id"]: r["allocated_amount"] for _, r in out.iterrows()}
     assert by_id["RC001"] == 100.0
     assert by_id["RC002"] == 300.0
+
+
+@pytest.mark.unit
+def test_redistribute_returns_empty_when_participants_missing():
+    base = pd.DataFrame(columns=["rep_id", "base_amount"])
+    out = redistribute_clinic_pool_by_base_amount(base, clinic_pool_amount=400.0)
+    assert out.empty

@@ -133,66 +133,66 @@
 - [ ] 2단계에서 overlap 생성 ON(중첩 유도/재배분 검증)
 
 ### 5.2 테스트 항목
-- [ ] Unit: 배분/재배분/룰연장/소스판정
-- [ ] Regression: 보전성(`sum(amount_pre_share) == sum(amount_post_share)`)
-- [ ] Edge: 룰 없음, 참여자 불완전, 다중 의원
+- [x] Unit: 배분/재배분/룰연장/소스판정
+- [x] Regression: 보전성(`sum(amount_pre_share) == sum(amount_post_share)`)
+- [x] Edge: 룰 없음, 참여자 불완전, 다중 의원
 
 ### 5.3 완료 기준 (Exit Criteria)
-- [ ] 보전성 위배 0건
-- [ ] 룰 소스 판정 오분류 0건
-- [ ] 전분기 연장 로직 케이스 테스트 통과
+- [x] 보전성 위배 0건
+- [x] 룰 소스 판정 오분류 0건
+- [x] 전분기 연장 로직 케이스 테스트 통과
 
 ## 6. Phase 5 - KPI Publish
 ### 6.1 구현 범위
-- [ ] `kpi_publish.py` 구현/완성
-- [ ] 월/분기/연 KPI 생성:
-- [ ] `rep_kpi_month.*`, `rep_kpi_quarter.*`, `rep_kpi_year.*`
-- [ ] `kpi_summary_month.*`, `kpi_summary_quarter.*`, `kpi_summary_year.*`
-- [ ] pre/post KPI와 share 필드 연결
-- [ ] validation 결과와 `data_quality_flag` 연결
+- [x] `kpi_publish.py` 구현/완성
+- [x] 월/분기/연 KPI 생성:
+- [x] `rep_kpi_month.*`, `rep_kpi_quarter.*`, `rep_kpi_year.*`
+- [x] `kpi_summary_month.*`, `kpi_summary_quarter.*`, `kpi_summary_year.*`
+- [x] pre/post KPI와 share 필드 연결
+- [x] validation 결과와 `data_quality_flag` 연결
 
 ### 6.2 테스트 항목
-- [ ] Contract: 6개 KPI 출력 스키마 검사
-- [ ] Integration: `share_settlement -> kpi_publish`
-- [ ] E2E(부분): 기간 필터(month/quarter/year) 합계 일관성
+- [x] Contract: 6개 KPI 출력 스키마 검사
+- [x] Integration: `share_settlement -> kpi_publish`
+- [x] E2E(부분): 기간 필터(month/quarter/year) 합계 일관성
 
 ### 6.3 완료 기준 (Exit Criteria)
-- [ ] KPI 출력 6종 누락 0건
-- [ ] 기간별 집계 일관성 위배 0건
-- [ ] `data_quality_flag` 정상 반영
+- [x] KPI 출력 6종 누락 0건
+- [x] 기간별 집계 일관성 위배 0건
+- [x] `data_quality_flag` 정상 반영
 
 ## 7. Phase 6 - Validation & Trace Operation
 ### 7.1 구현 범위
-- [ ] `validation.py` 구현/보강
-- [ ] `trace_log.py` 상태 전이 구현
-- [ ] 상태 전이: `Unverified -> Inquired -> Confirmed/Rejected`
-- [ ] validation 실패 사유 구조화 기록
-- [ ] KPI 발행 가능 + 경고 플래그 정책 구현
+- [x] `validation.py` 구현/보강
+- [x] `trace_log.py` 상태 전이 구현
+- [x] 상태 전이: `Unverified -> Inquired -> Confirmed/Rejected`
+- [x] validation 실패 사유 구조화 기록
+- [x] KPI 발행 가능 + 경고 플래그 정책 구현
 
 ### 7.2 테스트 항목
-- [ ] Unit: 이슈 분류, 상태 전이
-- [ ] Contract: `validation_report` 필수 컬럼
-- [ ] Integration: `tracking_validation -> validation -> trace_log`
-- [ ] Regression: 미포착 복원 루프
+- [x] Unit: 이슈 분류, 상태 전이
+- [x] Contract: `validation_report` 필수 컬럼
+- [x] Integration: `tracking_validation -> validation -> trace_log`
+- [x] Regression: 미포착 복원 루프
 
 ### 7.3 완료 기준 (Exit Criteria)
-- [ ] `validation_report.*` 생성 성공
-- [ ] trace 상태 전이 로그 생성 성공
-- [ ] 실패 사유 누락 0건
+- [x] `validation_report.*` 생성 성공
+- [x] trace 상태 전이 로그 생성 성공
+- [x] 실패 사유 누락 0건
 
 ## 8. Phase 7 - Streamlit Orchestration & Smoke
 ### 8.1 구현 범위
-- [ ] `app/streamlit_app.py`는 오케스트레이션만 담당
-- [ ] 화면 우선순위 구현:
-- [ ] 처방추적 검증
-- [ ] 중첩구간 쉐어 정산
-- [ ] 월/분기/연간 KPI 발행
-- [ ] Validation & Trace 운영
+- [x] `app/streamlit_app.py`는 오케스트레이션만 담당
+- [x] 화면 우선순위 구현
+- [x] 처방추적 검증
+- [x] 중첩구간 쉐어 정산
+- [x] 월/분기/연간 KPI 발행
+- [x] Validation & Trace 운영
 - [ ] 필수 필터 구현:
-- [ ] `year_month/year_quarter/year`
-- [ ] `territory_code`, `brand`
-- [ ] 병원/담당자 추가 필터
-- [ ] CSV/XLSX 다운로드
+- [x] `year_month/year_quarter/year`
+- [x] `territory_code`, `brand`
+- [x] 병원/담당자 추가 필터
+- [x] CSV/XLSX 다운로드
 - [ ] Share 수동조정/확정 기능(3단계):
 - [ ] `ratio_hosp`, `ratio_clinic` 또는 참여자별 비율 편집
 - [ ] 확정 시 `version`, `status`, `approved_by`, `approved_at` 저장
