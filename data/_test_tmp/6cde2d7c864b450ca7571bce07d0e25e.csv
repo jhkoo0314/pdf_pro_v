@@ -1,0 +1,2 @@
+ship_date,year_month,year_quarter,year,amount_ship,amount_supply,amount_pre_share,amount_post_share,qty,brand,territory_code,pharmacy_uid
+2026-01-01,2026-01,2026-Q1,2026,1000.0,900.0,1000.0,1000.0,10,BrandA,T01,P001

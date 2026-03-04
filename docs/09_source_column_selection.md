@@ -1,7 +1,7 @@
 # 09_source_column_selection.md
 
 목적:
-- `docs/data/raw` 원천 파일에서 어떤 컬럼을 수집할지 확정한다.
+- `data/raw` 원천 파일에서 어떤 컬럼을 수집할지 확정한다.
 - Phase 2(`ingest_merge`, `mastering`) 구현과 contract 테스트의 기준으로 사용한다.
 
 기준:
@@ -15,7 +15,7 @@
 
 ### 1.1 병원 원천
 파일:
-- `docs/data/raw/1.병원정보서비스(2025.12.).xlsx`
+- `data/raw/1.병원정보서비스(2025.12.).xlsx`
 시트:
 - `hospBasisList`
 
@@ -44,7 +44,7 @@
 
 ### 1.2 약국 원천
 파일:
-- `docs/data/raw/2.약국정보서비스(2025.12.).xlsx`
+- `data/raw/2.약국정보서비스(2025.12.).xlsx`
 시트:
 - `parmacyBasisList`
 
@@ -69,7 +69,7 @@
 
 ### 1.3 도매 원천
 파일:
-- `docs/data/raw/전국의약품도매업소표준데이터.csv`
+- `data/raw/전국의약품도매업소표준데이터.csv`
 
 필수 수집 컬럼(Required):
 - `facility_name(...)` -> `wholesaler_name` (시설명)
@@ -151,3 +151,4 @@
 - 다운로드 2종 운영:
 - `*_raw`: 영문 컬럼
 - `*_label`: 영문+한글 병행 컬럼
+

@@ -1,4 +1,4 @@
-# TODO.md - Prescription Data Flow 상세 구현계획 (Phase Gate)
+﻿# TODO.md - Prescription Data Flow 상세 구현계획 (Phase Gate)
 
 기준 문서:
 - `AGENTS.md`
@@ -49,50 +49,50 @@
 
 ## 2. Phase 1 - Foundation & Contract
 ### 2.1 구현 범위
-- [ ] 디렉토리/모듈 구조 정리 (`src/`, `app/`, `data/`)
-- [ ] 공통 컬럼/스키마 계약 정의
-- [ ] `io_utils.py`에 parquet/csv I/O 표준화
-- [ ] 필수 컬럼 계약 검증기 구현:
-- [ ] `ship_date`, `year_month`, `year_quarter`, `year`
-- [ ] `amount_ship`, `amount_supply`, `amount_pre_share`, `amount_post_share`
-- [ ] `qty`, `brand`, `territory_code`, `pharmacy_uid`
-- [ ] 감사 컬럼 계약 검증기 구현:
-- [ ] `share_applied_flag`
-- [ ] `share_rule_version`
-- [ ] `share_rule_source`
+- [x] 디렉토리/모듈 구조 정리 (`src/`, `app/`, `data/`)
+- [x] 공통 컬럼/스키마 계약 정의
+- [x] `io_utils.py`에 parquet/csv I/O 표준화
+- [x] 필수 컬럼 계약 검증기 구현:
+- [x] `ship_date`, `year_month`, `year_quarter`, `year`
+- [x] `amount_ship`, `amount_supply`, `amount_pre_share`, `amount_post_share`
+- [x] `qty`, `brand`, `territory_code`, `pharmacy_uid`
+- [x] 감사 컬럼 계약 검증기 구현:
+- [x] `share_applied_flag`
+- [x] `share_rule_version`
+- [x] `share_rule_source`
 
 ### 2.2 테스트 항목
-- [ ] Contract test: 필수 컬럼 존재/타입/nullable
-- [ ] I/O test: parquet round-trip, csv round-trip
-- [ ] Naming test: snake_case, canonical column 검사
+- [x] Contract test: 필수 컬럼 존재/타입/nullable
+- [x] I/O test: parquet round-trip, csv round-trip
+- [x] Naming test: snake_case, canonical column 검사
 
 ### 2.3 완료 기준 (Exit Criteria)
-- [ ] Contract test 100% 통과
-- [ ] 컬럼 누락 0건
-- [ ] `U+FFFD` 유입 0건, UTF-8 디코드 실패 0건
+- [x] Contract test 100% 통과
+- [x] 컬럼 누락 0건
+- [x] `U+FFFD` 유입 0건, UTF-8 디코드 실패 0건
 
 ## 3. Phase 2 - Ingest & Mastering
 ### 3.1 구현 범위
-- [ ] `generate_synth.py` 재현성(seed) 보장
-- [ ] `ingest_merge.py` 병합 원천 로우 생성
-- [ ] `mastering.py` 구현:
-- [ ] 원천 수집 컬럼은 `docs/09_source_column_selection.md` 확정안 준수
-- [ ] 지점/담당자 생성은 `docs/10_rep_branch_generation_plan.md` 확정안 준수
-- [ ] 지점 10개, 의원담당자 60명, 종합병원담당자 45명 생성
-- [ ] `pharmacy_uid` 부여(단일 책임)
-- [ ] `territory_code` 매핑
-- [ ] 매핑 품질 플래그 생성
+- [x] `generate_synth.py` 재현성(seed) 보장
+- [x] `ingest_merge.py` 병합 원천 로우 생성
+- [x] `mastering.py` 구현:
+- [x] 원천 수집 컬럼은 `docs/09_source_column_selection.md` 확정안 준수
+- [x] 지점/담당자 생성은 `docs/10_rep_branch_generation_plan.md` 확정안 준수
+- [x] 지점 10개, 의원담당자 60명, 종합병원담당자 45명 생성
+- [x] `pharmacy_uid` 부여(단일 책임)
+- [x] `territory_code` 매핑
+- [x] 매핑 품질 플래그 생성
 
 ### 3.2 테스트 항목
-- [ ] Unit: UID 생성 규칙, territory 매핑 규칙
-- [ ] Integration: `generate/ingest -> mastering`
-- [ ] Regression: 동일 seed 재실행 시 본문 동일성
+- [x] Unit: UID 생성 규칙, territory 매핑 규칙
+- [x] Integration: `generate/ingest -> mastering`
+- [x] Regression: 동일 seed 재실행 시 본문 동일성
 
 ### 3.3 완료 기준 (Exit Criteria)
-- [ ] `pharmacy_uid` 누락 0건
-- [ ] `territory_code` 누락 허용 기준 이하(기준은 validation_report에 명시)
-- [ ] 동일 seed+동일 파라미터 시 데이터 본문 동일
-- [ ] 지점/담당자 수량 조건 충족(10/60/45)
+- [x] `pharmacy_uid` 누락 0건
+- [x] `territory_code` 누락 허용 기준 이하(기준은 validation_report에 명시)
+- [x] 동일 seed+동일 파라미터 시 데이터 본문 동일
+- [x] 지점/담당자 수량 조건 충족(10/60/45)
 
 ## 4. Phase 3 - Tracking Validation (핵심)
 ### 4.1 구현 범위
@@ -279,3 +279,7 @@ Phase별 판정 체크:
 - [ ] Contract: 라벨 매핑 테이블의 영문/한글 1:1 매핑 검증
 - [ ] Integration: 출력 리포트에 병행 표기 컬럼 헤더 포함 검증
 - [ ] Smoke: Streamlit 원본 컬럼 토글 동작 검증
+
+
+
+
