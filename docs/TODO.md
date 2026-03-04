@@ -142,6 +142,56 @@
 - [x] 룰 소스 판정 오분류 0건
 - [x] 전분기 연장 로직 케이스 테스트 통과
 
+### 5.4 Phase 2 상세 구현계획 (중첩구간 유도 + Share 고도화)
+목표:
+- [ ] overlap 케이스를 의도적으로 생성하고, 중첩 정산/재배분/감사 추적을 운영 가능 상태로 만든다.
+
+구현 범위(엔진):
+- [ ] `share_engine.py` 2단계 설정 추가:
+- [ ] `overlap_enabled=True` 시 중첩구간 생성 로직 활성화
+- [ ] 중첩 참여자 유형(`hosp/clinic/mixed`) 판정 컬럼 추가
+- [ ] 중첩구간별 `overlap_group_id` 생성
+- [ ] pool 산출 기준을 `year_quarter x territory_code x brand x overlap_group_id`로 확장
+- [ ] 복수 의원 재배분 시 라운딩 보정(잔차 보정 1건 귀속) 추가
+
+구현 범위(룰/이력):
+- [ ] `share_rules`에 2단계 필드 확장:
+- [ ] `overlap_mode` (`none/partial/full`)
+- [ ] `participant_scope` (`hosp_only/clinic_only/mixed`)
+- [ ] `priority` (중첩 우선순위)
+- [ ] 룰 적용 이력 컬럼 추가:
+- [ ] `rule_match_key`
+- [ ] `rule_resolution_path` (`direct/extended/overlap_resolved/none`)
+- [ ] `allocation_rounding_delta`
+
+구현 범위(산출물):
+- [ ] `share_settlement.*`에 2단계 컬럼 반영
+- [ ] `share_overlap_audit.*` 신규 생성:
+- [ ] 중첩구간별 pool, 참여자, 배분전/후, 잔차 보정 내역 기록
+
+테스트 계획(Unit):
+- [ ] overlap_group_id 생성 규칙(동일 입력 시 동일 결과)
+- [ ] mixed 참여자 비율 배분 규칙
+- [ ] 라운딩 보정 후 보전성 유지
+- [ ] priority 기반 룰 선택 결정성
+
+테스트 계획(Integration):
+- [ ] `tracking_validation -> share_settlement(phase2)` 파이프라인 검증
+- [ ] overlap ON/OFF 결과 차이 검증(ON에서만 중첩 컬럼 populated)
+- [ ] `share_overlap_audit`와 `share_settlement` 키 정합성 검증
+
+테스트 계획(Regression/E2E):
+- [ ] 동일 seed 재실행 시 overlap 그룹/배분 결과 동일
+- [ ] 전분기 연장 + 중첩 동시 발생 시 소스판정 일관성 유지
+- [ ] 분기 경계(예: Q1->Q2)에서 룰 상속/중첩 해소 시나리오 검증
+
+완료 기준(Exit Criteria):
+- [ ] overlap ON 데이터셋에서 `overlap_group_id` 누락 0건
+- [ ] `sum(amount_pre_share) == sum(amount_post_share)` 보전성 위배 0건
+- [ ] `rule_resolution_path` 허용값 외 발생 0건
+- [ ] `share_overlap_audit.*` 생성 성공 + 키 정합성 오류 0건
+- [ ] Phase2 marker(`integration/regression/e2e`) 100% 통과
+
 ## 6. Phase 5 - KPI Publish
 ### 6.1 구현 범위
 - [x] `kpi_publish.py` 구현/완성

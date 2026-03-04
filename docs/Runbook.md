@@ -1,112 +1,108 @@
-# Runbook — Prescription Data Flow (MVP)
+# Runbook - Prescription Data Flow (MVP Rebuild)
 
-## 0) 실행 환경 고정(Conda)
-1. `conda activate pdf-pro`
-2. 인터프리터 확인:
+## 0) 목적
+이 문서는 운영 관점에서 PDF 파이프라인을 실행/점검/판정하는 표준 절차다.  
+핵심 흐름은 `병합 -> 마스터링 -> 추적검증 -> 쉐어정산 -> KPI 발행 -> Validation/Trace` 순서로 고정한다.
+
+## 1) 운영 전 점검
+1. Python/의존성 확인
    - `python -V`
-   - `where python`
    - `python -m pip -V`
-3. `conda` 명령이 잡히지 않으면:
-   - `C:\ProgramData\Anaconda3\Scripts\conda.exe run -n base python -V`
-4. 패키지 설치/업데이트는 항상 `python -m pip ...` 형태 사용
+2. 입력 파일 확인(`data/raw`)
+   - 병원 원천: `1.*.xlsx`
+   - 약국 원천: `2.*.xlsx`
+   - 도매 원천: `*.csv`
+3. 인코딩 점검
+   - 텍스트 파일 UTF-8 유지
+   - `U+FFFD`(replacement char) 유입 금지
 
-## 1) 분기 운영 절차(본부)
-1. 출고 raw 적재(출고일 기준)
-2. 마스터링:
-   - pharmacy_uid 부여
-   - territory_code 부여(거래처ID 우선, 없으면 수작업)
-3. 룰 관리:
-   - RULE_SHARE_QUARTERLY 확정(version, status=confirmed)
-   - 룰 누락 구간은 전분기 연장 디폴트 적용
-4. 정산 실행:
-   - Pre-share 산출 → 쉐어 적용(Post-share) → rep_kpi_quarter 생성
-5. 검증/리포트:
-   - validation_report 생성
-   - 전분기 연장 적용 목록 및 룰 버전 확인
-6. 배포:
-   - Streamlit 갱신 또는 outputs 파일 배포(포트폴리오에서는 outputs 저장)
+## 2) 표준 실행 절차 (CLI)
+1. 차원/병합 생성
+   - `python -m src.generate_synth --seed 42 --valid-from 2026-01-01 --output-dir data/raw`
+   - `python -m src.ingest_merge --raw-dir data/raw --output-dir data/raw --seed 42`
+2. 마스터링
+   - `python -m src.mastering --raw-dir data/raw --output-dir data/outputs --seed 42 --territory-missing-threshold 0.05`
+3. 추적 검증
+   - `python -m src.tracking_validation --input-dir data/outputs --output-dir data/outputs --min-coverage 0.75`
+4. 쉐어 정산
+   - `python -m src.share_engine --input-dir data/outputs --output-dir data/outputs`
+5. KPI 발행
+   - `python -m src.kpi_publish --input-dir data/outputs --output-dir data/outputs`
+6. 검증/트레이스
+   - `python -m src.validation --input-dir data/outputs --output-dir data/outputs`
+   - `python -m src.trace_log --input-dir data/outputs --output-dir data/outputs`
 
-## 2) 문전약국 취합 절차
-1. 담당자 제출(병원별 문전약국: 이름/주소/전화)
-2. 본부 취합 및 지도 검증(상식적 근접 여부)
-3. 승인 매핑을 MAP_FRONT_PHARMACY 반영
-4. 공지: 취합 누락 약국은 실적 산정 제외
+## 3) Streamlit 운영 절차
+1. 앱 실행
+   - `streamlit run app/streamlit_app.py`
+2. 사이드바 `MVP1 전체 파이프라인 실행` 버튼 실행
+3. 탭별 점검
+   - `처방추적 검증`: coverage/gap 확인
+   - `중첩구간 쉐어 정산`: MVP1은 overlap OFF 상태 확인
+   - `월/분기/연간 KPI 발행`: pre/post KPI 및 data_quality_flag 확인
+   - `Validation & Trace 운영`: 이슈/상태전이 로그 확인
 
-## 3) 미포착 케이스 처리
-1. Validation에서 UNKNOWN_WHOLESALER 또는 출고 미포착 감지
-2. 담당자 도매명 확인(약국 확인)
-3. 본부가 도매에 약국 거래 여부 문의
-4. LOG 상태 업데이트(Confirmed/Rejected)
-5. 다음 분기부터 매핑/커버리지 개선(포트폴리오에서는 시뮬레이션)
+## 4) 산출물 점검 체크리스트
+필수 출력(`data/outputs`)
+1. `tracking_report_label.*`
+2. `share_settlement_label.*`
+3. `rep_kpi_month|quarter|year_label.*`
+4. `kpi_summary_month|quarter|year_label.*`
+5. `validation_report_label.*`
+6. `trace_log_label.*`, `trace_history_label.*`
 
-## 4) 변경 관리
-- 룰은 분기 단위로 변경 가능하나, 반드시 version 증가 및 적용 결과에 버전 기록
-- territory 매핑 변경 시 영향 범위를 Validation에 표시(이상치 원인 추적용)
+필수 조건
+1. `pharmacy_uid` 누락 0건
+2. `share_rule_source` 허용값(`direct/extended/none`) 외 0건
+3. 보전성 위배 0건 (`sum(amount_pre_share) == sum(amount_post_share)`)
+4. `data_quality_flag` 생성 및 상태 확인
 
-## 5) 월 운영정책 (신규)
-### 5.1 운영 원칙
-1. 월 운영의 1순위 목적은 처방추적 품질 확보이다.
-2. 월 운영은 분기/연간 정산의 선행 품질 게이트로 사용한다.
-3. 월 마감 전 미포착 케이스를 최대한 해소하고, 분기 이월 사유를 명시한다.
+## 5) 장애 대응
+1. `ModuleNotFoundError: src`
+   - Streamlit 앱 경로 실행 위치 점검
+   - `app/streamlit_app.py` 내 프로젝트 루트 path 주입 여부 확인
+2. 한글 깨짐
+   - 파일 저장 인코딩 UTF-8로 재저장
+   - 콘솔 깨짐과 파일 깨짐 구분(파일은 Python으로 확인)
+3. 출력 누락
+   - 상위 단계 산출물 존재 확인 후 재실행
+   - `tracking -> share -> kpi -> validation -> trace` 순서 유지
 
-### 5.2 월간 표준 일정
-1. `M+1 ~ M+3 영업일`: 도매 출하 로우 수집/병합, 원천 누락 점검
-2. `M+4 ~ M+5 영업일`: mastering(약국 UID/권역) 및 문전약국 등록 변경 반영
-3. `M+6 ~ M+7 영업일`: 병원 claim 대비 추적 검증(coverage/gap) 수행
-4. `M+8 영업일`: 권역 중첩 구간 사전 쉐어 시뮬레이션 및 draft 룰 점검
-5. `M+9 영업일`: 월 KPI 발행 및 validation/trace 보고서 확정
+## 6) 단계별 운영 기준
+## 6.1 MVP 1단계 (완료 상태 기준)
+1. overlap 생성 OFF
+2. 병합 결과 해석 가능
+3. 추적/쉐어/KPI/validation/trace 산출물 생성
+4. Streamlit에서 필터/조회/다운로드 동작
 
-### 5.3 월간 필수 점검 항목
-1. 병합 로우 기준 데이터 완전성:
-   - 중복 로우/누락 로우/필수 컬럼 누락 여부
-2. 추적 품질:
-   - 병원별 `coverage_ratio`, `gap_amount`, `gap_ratio`
-   - 급증/급감 이상치 목록
-3. 룰 품질:
-   - `direct/extended/none` 비율
-   - `draft` 잔량 및 확정 필요 건수
-4. 미포착 운영:
-   - `Unverified -> Inquired -> Confirmed/Rejected` 상태 전이 정상 여부
-   - 미해결 SLA 경과일 상위 케이스
+## 6.2 Phase 2 (중첩구간 유도 + Share 고도화)
+1. overlap ON 데이터 생성
+2. 중첩구간별 정산 및 감사 로그(`share_overlap_audit`) 생성
+3. 전분기 연장 + 중첩 동시 시나리오 검증
 
-### 5.4 월간 필수 산출물
-1. `data/outputs/rep_kpi_month.*`
-2. `data/outputs/kpi_summary_month.*`
-3. `data/outputs/validation_report.*`
-4. `data/outputs/tracking_report.*`
-5. `data/log/log_wholesaler_trace.*` (월 업데이트 반영)
+## 6.3 Phase 3 완료 기준 (업로드 자동화 + 수동 확정)
+완료 판정은 아래 5개를 모두 충족해야 한다.
+1. **파일 업로드 자동화**
+   - 사용자가 병원/약국/도매 원천 파일 업로드 시, 사전 수작업 없이 백엔드 파이프라인 자동 실행
+2. **자동 검증/오류 피드백**
+   - 스키마/인코딩/필수 컬럼 오류를 UI에서 즉시 표시
+3. **수동 조정 및 확정**
+   - Streamlit에서 share 값 직접 조정 가능
+   - 확정 시 `version`, `status`, `approved_by`, `approved_at` 저장
+4. **재반영 일관성**
+   - 확정 후 KPI 재발행 시 pre/post 집계 일관성 유지
+5. **운영 추적성**
+   - 확정 이력과 trace 상태전이 로그가 함께 남고, 다운로드 가능
 
-### 5.5 월 -> 분기/연간 연결 규칙
-1. 분기 KPI는 월 KPI 누적 기준으로 산출한다.
-2. 연간 KPI는 분기 확정분 누적 기준으로 산출한다.
-3. 월 미해결 케이스는 분기 마감 시 `이월/종결` 상태를 반드시 표기한다.
-4. 전분기 연장 룰 적용 건은 월 리포트부터 사전 경고로 노출한다.
+## 7) 권장 테스트 실행
+1. `pytest -m unit`
+2. `pytest -m contract`
+3. `pytest -m integration`
+4. `pytest -m regression`
+5. `pytest -m e2e`
+6. `pytest -m smoke`
 
-### 5.6 책임자/승인
-1. 데이터 운영 담당:
-   - 병합/마스터링/검증 실행 및 증적 저장
-2. 본부 운영 담당:
-   - 룰 확정, 미포착 케이스 승인, 이월 사유 승인
-3. 지점/담당자:
-   - 문전약국 등록 변경 제출, claim 근거 제출, 미포착 확인 응답
-
-## ??? ?? ?? ??? (??)
-?? ??? ?? ??? ????.
-
-1?? ?? (MVP):
-- overlap ?? ??
-- ?/?? ??? ??? ?? ?? ???? ?? ??
-- share? ?? ??? ????? ??
-
-2?? ??:
-- overlap ??(20~30%) ? ?? ?? ????? ??
-- ???/??? ??/??? ?? ?? ??
-
-3?? ??:
-- Streamlit?? share ?? ?? -> ??(approve) ?? ??
-- ?? ??? ?? ?? ??
-
-4?? ??(??):
-- ?? ??? ??? ?? ?? ?? ???? ??
-- ??? ?? ????? ?? ? ?? ?? ??
-- ??/??? validation_report ???? ?? ??
+## 8) 변경 이력 관리
+1. 스키마/룰/화면 변경 시 문서 동시 업데이트
+2. TODO 체크 상태와 실제 테스트 결과 일치 유지
+3. Phase Gate 판정 시 근거 파일 경로를 기록
