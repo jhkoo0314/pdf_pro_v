@@ -37,13 +37,13 @@
 
 ## 1.1 MVP 단계별 적용 정책 (사용자 요청 반영)
 핵심 정책:
-- [ ] 1단계(MVP): 중첩구간 share 케이스를 생성하지 않는다.
-- [ ] 1단계 목표: 병합파일(`ingest_merge` 결과) 기준으로 해석 가능한 상태를 완성한다.
+- [x] 1단계(MVP): 중첩구간 share 케이스를 생성하지 않는다.
+- [x] 1단계 목표: 병합파일(`ingest_merge` 결과) 기준으로 해석 가능한 상태를 완성한다.
 - [ ] 2단계: 중첩구간을 의도적으로 유도하고 share 엔진/정산 검증을 수행한다.
 - [ ] 3단계: Streamlit에서 share 값을 직접 조정하고 확정(승인)할 수 있게 한다.
 
 단계별 산출물/기능 기준:
-- [ ] 1단계: 추적/검증 가능한 병합 해석 리포트 + 기본 KPI
+- [x] 1단계: 추적/검증 가능한 병합 해석 리포트 + 기본 KPI
 - [ ] 2단계: overlap 케이스 포함 `share_rule_source`/재배분 검증
 - [ ] 3단계: UI 수동 조정 + 확정 이력(`approved_by`, `approved_at`, `version`) 저장
 
@@ -199,14 +199,14 @@
 - [ ] 확정 전/후 시뮬레이션 비교(preview vs confirmed)
 
 ### 8.2 테스트 항목
-- [ ] Smoke: 주요 페이지 로딩/필터 적용
-- [ ] Integration: 추적 -> 쉐어 -> KPI 흐름 연결
-- [ ] UX check: 기준 파일/룰버전/실행시각 표시
+- [x] Smoke: 주요 페이지 로딩/필터 적용
+- [x] Integration: 추적 -> 쉐어 -> KPI 흐름 연결
+- [x] UX check: 기준 파일/룰버전/실행시각 표시
 
 ### 8.3 완료 기준 (Exit Criteria)
-- [ ] 주요 경로 smoke 100% 통과
-- [ ] 추적 -> 쉐어 -> KPI 흐름 UI 검증 성공
-- [ ] 필수 다운로드 동작 성공
+- [x] 주요 경로 smoke 100% 통과
+- [x] 추적 -> 쉐어 -> KPI 흐름 UI 검증 성공
+- [x] 필수 다운로드 동작 성공
 - [ ] 수동 조정 -> 확정 -> KPI 재반영 E2E 검증 성공
 
 ## 9. 공통 테스트 전략 (자동화 권장)
@@ -261,24 +261,24 @@ Phase별 판정 체크:
 - 컬럼이 영어만 존재해도 사용자 화면/문서에서는 항상 영어+한글을 함께 표기한다.
 
 정책:
-- [ ] Canonical 컬럼명은 영문(snake_case) 유지
-- [ ] 문서/리포트/UI 라벨은 `영문 컬럼명 (한글명)` 형식으로 표기
+- [x] Canonical 컬럼명은 영문(snake_case) 유지
+- [x] 문서/리포트/UI 라벨은 `영문 컬럼명 (한글명)` 형식으로 표기
 - [ ] 데이터 사전에 `column_name_en`, `column_name_ko`, `definition_ko`를 명시
-- [ ] Streamlit 표/차트는 기본 한글 라벨, 원본 영문 컬럼 토글 제공
+- [x] Streamlit 표/차트는 기본 한글 라벨, 원본 영문 컬럼 토글 제공
 - [ ] CSV/XLSX 다운로드는 아래 2종 제공
 - [ ] `*_raw` : 영문 원본 컬럼
-- [ ] `*_label` : 영문+한글 병행 컬럼 헤더
+- [x] `*_label` : 영문+한글 병행 컬럼 헤더
 
 예시 표기:
-- [ ] `ship_date (출고일)`
-- [ ] `amount_ship (출고금액)`
-- [ ] `territory_code (영업권역코드)`
-- [ ] `coverage_ratio (추적커버리지비율)`
+- [x] `ship_date (출고일)`
+- [x] `amount_ship (출고금액)`
+- [x] `territory_code (영업권역코드)`
+- [x] `coverage_ratio (추적커버리지비율)`
 
 검증 테스트 추가:
-- [ ] Contract: 라벨 매핑 테이블의 영문/한글 1:1 매핑 검증
-- [ ] Integration: 출력 리포트에 병행 표기 컬럼 헤더 포함 검증
-- [ ] Smoke: Streamlit 원본 컬럼 토글 동작 검증
+- [x] Contract: 라벨 매핑 테이블의 영문/한글 1:1 매핑 검증
+- [x] Integration: 출력 리포트에 병행 표기 컬럼 헤더 포함 검증
+- [x] Smoke: Streamlit 원본 컬럼 토글 동작 검증
 
 
 
