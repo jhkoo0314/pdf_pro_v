@@ -1,0 +1,2 @@
+ship_date (출고일),year_month (연월),year_quarter (연분기),year (연도),amount_ship (출고금액),amount_supply (공급금액),amount_pre_share (쉐어전금액),amount_post_share (쉐어후금액),qty (수량),brand (브랜드),territory_code (영업권역코드),pharmacy_uid (약국UID)
+2026-01-01,2026-01,2026-Q1,2026,1000.0,900.0,1000.0,1000.0,10,BrandA,T01,P001

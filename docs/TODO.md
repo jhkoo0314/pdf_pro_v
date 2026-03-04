@@ -95,41 +95,41 @@
 - [x] 지점/담당자 수량 조건 충족(10/60/45)
 
 ## 4. Phase 3 - Tracking Validation (핵심)
-### 4.1 구현 범위
-- [ ] `tracking_validation.py` 구현
-- [ ] 병원 claim vs 출하 추적량 비교
-- [ ] 지표 산출:
-- [ ] `tracked_amount`, `tracked_qty`
-- [ ] `coverage_ratio`
-- [ ] `gap_amount`, `gap_ratio`
-- [ ] `tracking_quality_flag`
-- [ ] `data/outputs/tracking_report.*` 생성
+###  4.1 구현 범위
+- [x] `tracking_validation.py` 구현
+- [x] 병원 claim vs 출하 추적량 비교
+- [x] 지표 산출:
+- [x] `tracked_amount`, `tracked_qty`
+- [x] `coverage_ratio`
+- [x] `gap_amount`, `gap_ratio`
+- [x] `tracking_quality_flag`
+- [x] `data/outputs/tracking_report.*` 생성
 
 ### 4.2 테스트 항목
-- [ ] Unit: coverage/gap 계산
-- [ ] Contract: `tracking_report` 필수 컬럼 검사
-- [ ] Integration: `mastering -> tracking_validation`
-- [ ] E2E(부분): 정상추적/저커버리지/미추적 케이스
+- [x] Unit: coverage/gap 계산
+- [x] Contract: `tracking_report` 필수 컬럼 검사
+- [x] Integration: `mastering -> tracking_validation`
+- [x] E2E(부분): 정상추적/저커버리지/미추적 케이스
 
 ### 4.3 완료 기준 (Exit Criteria)
-- [ ] `tracking_report.*` 생성 성공
-- [ ] coverage/gap 계산 오차 허용 범위 내
-- [ ] 미포착 케이스가 trace 입력 포맷으로 변환 가능
+- [x] `tracking_report.*` 생성 성공
+- [x] coverage/gap 계산 오차 허용 범위 내
+- [x] 미포착 케이스가 trace 입력 포맷으로 변환 가능
 
 ## 5. Phase 4 - Share Settlement
 ### 5.1 구현 범위
-- [ ] `share_engine.py` 순수함수 구현/보강
-- [ ] 정산 로직:
-- [ ] pool 합산 후 비율 배분
-- [ ] 복수 의원 rep 재배분(BaseAmount 비례)
-- [ ] 룰 누락 시 전분기 연장(`extended`)
-- [ ] 소스 판정 `direct`/`extended`/`none`
-- [ ] 감사 컬럼 기록:
-- [ ] `share_applied_flag`
-- [ ] `share_rule_version`
-- [ ] `share_rule_source`
-- [ ] 단계 적용:
-- [ ] 1단계에서는 overlap 생성 OFF(정산은 단순 케이스 기준)
+- [x] `share_engine.py` 순수함수 구현/보강
+- [x] 정산 로직:
+- [x] pool 합산 후 비율 배분
+- [x] 복수 의원 rep 재배분(BaseAmount 비례)
+- [x] 룰 누락 시 전분기 연장(`extended`)
+- [x] 소스 판정 `direct`/`extended`/`none`
+- [x] 감사 컬럼 기록:
+- [x] `share_applied_flag`
+- [x] `share_rule_version`
+- [x] `share_rule_source`
+- [x] 단계 적용:
+- [x] 1단계에서는 overlap 생성 OFF(정산은 단순 케이스 기준)
 - [ ] 2단계에서 overlap 생성 ON(중첩 유도/재배분 검증)
 
 ### 5.2 테스트 항목
@@ -279,6 +279,10 @@ Phase별 판정 체크:
 - [ ] Contract: 라벨 매핑 테이블의 영문/한글 1:1 매핑 검증
 - [ ] Integration: 출력 리포트에 병행 표기 컬럼 헤더 포함 검증
 - [ ] Smoke: Streamlit 원본 컬럼 토글 동작 검증
+
+
+
+
 
 
 

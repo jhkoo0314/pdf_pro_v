@@ -18,6 +18,12 @@ COLUMN_LABEL_KO: dict[str, str] = {
     "qty": "수량",
     "brand": "브랜드",
     "sku": "SKU",
+    "formulation": "\uc81c\ud615",
+    "strength": "\ud568\ub7c9",
+    "pack_size": "\ud3ec\uc7a5\ub2e8\uc704",
+    "pack_units": "\ud3ec\uc7a5\uc218\ub7c9",
+    "price_per_unit": "\uac1c\ub2f9\ub2e8\uac00",
+    "price_per_pack": "\ud3ec\uc7a5\ub2e8\uac00",
     "territory_code": "영업권역코드",
     "territory_source": "권역소스",
     "pharmacy_uid": "약국UID",
@@ -26,6 +32,11 @@ COLUMN_LABEL_KO: dict[str, str] = {
     "pharmacy_addr": "약국주소",
     "pharmacy_tel": "약국전화",
     "pharmacy_account_id": "약국거래처ID",
+    "manufacturer_name": "\uc81c\uc57d\uc0ac",
+    "mfg_to_wholesaler_path": "\uc81c\uc57d\uc0ac-\ub3c4\ub9e4\uc0c1\uacbd\ub85c",
+    "discount_rate": "\ud560\uc778\uc728",
+    "list_price_per_pack": "\ud3ec\uc7a5\uae30\uc900\ub2e8\uac00",
+    "net_price_per_pack": "\ud560\uc778\ud6c4\ud3ec\uc7a5\ub2e8\uac00",
     "pharmacy_provider_id": "약국요양기호",
     "pharmacy_type_code": "약국종별코드",
     "pharmacy_type_name": "약국종별명",
@@ -57,6 +68,20 @@ COLUMN_LABEL_KO: dict[str, str] = {
     "active_flag": "활성여부",
     "is_valid_wholesaler": "유효도매여부",
     "mapping_quality_flag": "매핑품질플래그",
+    "claim_amount": "청구금액",
+    "claim_qty": "청구수량",
+    "tracked_amount": "추적금액",
+    "tracked_qty": "추적수량",
+    "gap_amount": "갭금액",
+    "gap_qty": "갭수량",
+    "coverage_ratio": "커버리지비율",
+    "gap_ratio": "갭비율",
+    "tracking_quality_flag": "추적품질플래그",
+    "ratio_hosp": "병원비율",
+    "ratio_clinic": "의원비율",
+    "amount_hosp_share": "병원배분금액",
+    "amount_clinic_share": "의원배분금액",
+    "overlap_generated_flag": "중첩생성여부",
     "data_source": "데이터소스",
     "source_file": "원천파일",
     "source_sheet": "원천시트",
@@ -77,11 +102,16 @@ COLUMN_LABEL_KO: dict[str, str] = {
     "threshold": "허용기준",
     "status": "상태",
     "note": "비고",
+    "trace_status": "추적상태",
+    "trace_reason": "추적사유",
+    "created_from": "생성소스",
 }
 
 
 def bilingual_column_name(col: str) -> str:
     ko = COLUMN_LABEL_KO.get(col)
+    if isinstance(ko, str) and "\\u" in ko:
+        ko = ko.encode("utf-8").decode("unicode_escape")
     return f"{col} ({ko})" if ko else col
 
 

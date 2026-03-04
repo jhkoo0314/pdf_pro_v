@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from pathlib import Path
 import random
 import re
@@ -10,6 +11,7 @@ import re
 import pandas as pd
 
 from src.io_utils import write_dual_outputs
+from src.product_catalog import get_brand_catalog
 
 
 HOSPITAL_FILE_GLOB = "1.*.xlsx"
@@ -152,11 +154,19 @@ def _to_year_quarter(dt: pd.Timestamp) -> str:
     return f"{dt.year}-Q{q}"
 
 
+def _route_discount_rate(seed: int, manufacturer_name: str, wholesaler_id: str) -> float:
+    """Deterministic random discount rate by manufacturer->wholesaler route."""
+    key = f"{seed}|{manufacturer_name}|{wholesaler_id}"
+    n = int(hashlib.md5(key.encode("utf-8")).hexdigest()[:8], 16) / float(0xFFFFFFFF)
+    # 3% ~ 15% discount band
+    return round(0.03 + (0.12 * n), 4)
+
+
 def build_fact_ship_pharmacy_raw(
     ref_pharmacy: pd.DataFrame, ref_wholesaler: pd.DataFrame, seed: int
 ) -> pd.DataFrame:
     rng = random.Random(seed)
-    brands = ["brand_a", "brand_b", "brand_c"]
+    product_catalog = get_brand_catalog()
 
     wholes = ref_wholesaler[
         (ref_wholesaler["active_flag"] == True) & (ref_wholesaler["is_valid_wholesaler"] == True)
@@ -170,10 +180,17 @@ def build_fact_ship_pharmacy_raw(
         n_rows = rng.randint(1, 2)
         for _ in range(n_rows):
             w = wholes.iloc[rng.randrange(len(wholes))]
+            product = product_catalog[(ship_seq - 1) % len(product_catalog)]
+            sku_item = rng.choice(product["sku_options"])
+            sku = str(sku_item["sku"])
+            manufacturer_name = str(sku_item["manufacturer_name"])
+            discount_rate = _route_discount_rate(seed, manufacturer_name, str(w["wholesaler_id"]))
             ship_date = pd.Timestamp(2025, rng.randint(1, 12), rng.randint(1, 28))
             qty = rng.randint(5, 200)
-            amount_ship = float(qty * rng.randint(9000, 30000))
-            amount_supply = float(round(amount_ship * 0.9, 2))
+            list_price_per_pack = float(sku_item["price_per_pack"])
+            net_price_per_pack = float(round(list_price_per_pack * (1.0 - discount_rate), 2))
+            amount_ship = float(round(qty * list_price_per_pack, 2))
+            amount_supply = float(round(qty * net_price_per_pack, 2))
             rows.append(
                 {
                     "ship_id": f"S{ship_seq:08d}",
@@ -188,8 +205,19 @@ def build_fact_ship_pharmacy_raw(
                     "pharmacy_addr": p["pharmacy_addr"],
                     "pharmacy_tel": p["pharmacy_tel"],
                     "pharmacy_account_id": None,
-                    "brand": rng.choice(brands),
-                    "sku": None,
+                    "manufacturer_name": manufacturer_name,
+                    "mfg_to_wholesaler_path": f"{manufacturer_name}->{w['wholesaler_name']}",
+                    "brand": product["brand"],
+                    "sku": sku,
+                    "formulation": str(sku_item["formulation"]),
+                    "strength": str(sku_item["strength"]),
+                    "pack_size": str(sku_item["pack_size"]),
+                    "pack_units": int(sku_item["pack_units"]),
+                    "price_per_unit": float(sku_item["price_per_unit"]),
+                    "price_per_pack": list_price_per_pack,
+                    "discount_rate": discount_rate,
+                    "list_price_per_pack": list_price_per_pack,
+                    "net_price_per_pack": net_price_per_pack,
                     "qty": qty,
                     "amount_ship": amount_ship,
                     "amount_supply": amount_supply,
