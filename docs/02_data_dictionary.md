@@ -176,6 +176,9 @@
 - ratio_clinic (float, origin_type: synthetic)
 - version (int, origin_type: synthetic)
 - status (draft/confirmed, origin_type: synthetic)
+- overlap_mode (`none`/`partial`/`full`, origin_type: synthetic)
+- participant_scope (`hosp_only`/`clinic_only`/`mixed`, origin_type: synthetic)
+- priority (int, origin_type: synthetic)
 - extend_prev_quarter_flag (bool, origin_type: synthetic)
 - notes (nullable, origin_type: synthetic)
 
@@ -202,3 +205,37 @@
 - status (Unverified/Inquired/Confirmed/Rejected, origin_type: synthetic)
 - hq_result_note (nullable, origin_type: synthetic)
 - resolved_date (nullable, origin_type: synthetic)
+
+## 11) SHARE_SETTLEMENT (쉐어 정산 결과)
+- Grain: `ship_id` row
+
+### Columns
+- amount_pre_share (float, origin_type: derived)
+- amount_hosp_share (float, origin_type: derived)
+- amount_clinic_share (float, origin_type: derived)
+- amount_post_share (float, origin_type: derived)
+- share_applied_flag (bool, origin_type: derived)
+- share_rule_version (string, nullable, origin_type: derived)
+- share_rule_source (`direct`/`extended`/`none`, origin_type: derived)
+- overlap_generated_flag (bool, origin_type: derived)
+- overlap_participant_type (`hosp`/`clinic`/`mixed`, origin_type: derived)
+- overlap_group_id (string, nullable, origin_type: derived)
+- rule_match_key (string, origin_type: derived)
+- rule_resolution_path (`direct`/`extended`/`overlap_resolved`/`none`, origin_type: derived)
+- allocation_rounding_delta (float, origin_type: derived)
+- share_rule_priority (int, nullable, origin_type: derived)
+
+## 12) SHARE_OVERLAP_AUDIT (중첩 정산 감사)
+- Grain: `year_quarter × territory_code × brand × overlap_group_id`
+
+### Columns
+- participant_count (int, origin_type: derived)
+- participant_type_set (string, origin_type: derived)
+- pool_amount_pre_share (float, origin_type: derived)
+- pool_amount_post_share (float, origin_type: derived)
+- pool_amount_hosp_share (float, origin_type: derived)
+- pool_amount_clinic_share (float, origin_type: derived)
+- rounding_delta_sum (float, origin_type: derived)
+- overlap_generated_rows (int, origin_type: derived)
+- share_rule_source_set (string, origin_type: derived)
+- conservation_gap (float, origin_type: derived)

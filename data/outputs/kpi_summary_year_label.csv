@@ -1,2 +1,2 @@
 year (연도),total_pre_share (합계쉐어전금액),total_post_share (합계쉐어후금액),share_rules_applied_count (합계룰적용건수),direct_rules_count (직접룰건수),extended_rules_count (연장룰건수),none_rules_count (미적용건수),row_count (집계행수),data_quality_flag (데이터품질플래그)
-2025,248295631483.0,248295631483.0,38331,38331,0,0,38331,pass
+2025,248295631483.0,248295631483.0,38331,38331,0,0,38331,fail
